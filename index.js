@@ -4,9 +4,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
+const config = require('./config/key');
+
 const {User} = require('./models/user');
 
-mongoose.connect('mongodb+srv://hrat:D5s4Q357a159O@cluster0-l01mn.mongodb.net/test?retryWrites=true&w=majority',
+mongoose.connect(config.mongoURI,
     {useNewUrlParser: true}).then(() => console.log("DB Connected"))
                             .catch(err => console.error(err));
 
