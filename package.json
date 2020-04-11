@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "backend": "nodemon server/index.js"
+    "backend": "node_modules/.bin/nodemon server/index.js"
   },
   "author": "Hrat Tahmazyan",
   "license": "ISC",
