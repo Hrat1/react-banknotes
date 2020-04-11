@@ -1,7 +1,7 @@
 /node_modules
 /build
 
-config/dev.js
+dev.js
 
 .DS_Store
 
