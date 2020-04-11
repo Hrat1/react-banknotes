@@ -7,18 +7,25 @@ const cookieParser = require('cookie-parser');
 const config = require('./config/key');
 
 const {User} = require('./models/user');
+const {auth} = require('./middleware/auth');
 
 mongoose.connect(config.mongoURI,
     {useNewUrlParser: true}).then(() => console.log("DB Connected"))
     .catch(err => console.error(err));
 
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.json({"Hello ~": "Hi ~~ sdfhkjsd"})
+app.get('/api/users/auth',auth, (req, res) => {
+    res.status(200).json({
+        _id: req._id,
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.role
+    });
 });
 
 
@@ -35,6 +42,7 @@ app.post('/api/users/register', (req, res) => {
 });
 
 app.post('/api/users/login', (req, res) => {
+
     // find the email
     User.findOne({email: req.body.email}, (err, user) => {
         if (!user)
@@ -42,6 +50,7 @@ app.post('/api/users/login', (req, res) => {
                 loginSuccess: false,
                 message: "Auth failed, email not found."
             });
+
         // comparePassword
         user.comparePassword(req.body.password, (err, isMatch) => {
             if (!isMatch) {
@@ -51,8 +60,8 @@ app.post('/api/users/login', (req, res) => {
                 })
             }
         });
-        //generateToken
 
+        //generateToken
         user.generateToken((err, user) => {
             if (err) return res.status(400).send(err);
             res.cookie("x_auth", user.token)
@@ -62,10 +71,6 @@ app.post('/api/users/login', (req, res) => {
                 })
         });
     });
-
-
-
-
 });
 
 app.listen(5000);
