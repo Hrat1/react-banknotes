@@ -15,6 +15,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+    res.json({"Hello ~": "Hi ~~ sdfhkjsd"})
+});
+
+
 app.post('/api/users/register', (req, res) => {
     const user = new User(req.body);
 
