@@ -10,7 +10,7 @@ const {User} = require('./models/user');
 
 mongoose.connect(config.mongoURI,
     {useNewUrlParser: true}).then(() => console.log("DB Connected"))
-                            .catch(err => console.error(err));
+    .catch(err => console.error(err));
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -32,6 +32,38 @@ app.post('/api/users/register', (req, res) => {
             userData: doc
         });
     });
+});
+
+app.post('/api/users/login', (req, res) => {
+    // find the email
+    User.findOne({email: req.body.email}, (err, user) => {
+        if (!user)
+            return res.json({
+                loginSuccess: false,
+                message: "Auth failed, email not found."
+            });
+        // comparePassword
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            if (!isMatch) {
+                return res.json({
+                    loginSuccess: false,
+                    message: " Wrong password. "
+                })
+            }
+        });
+        //generateToken
+
+        user.generateToken((err, user) => {
+            if (err) return res.status(400).send(err);
+            res.cookie("x_auth", user.token)
+                .status(200)
+                .json({
+                    loginSuccess: true
+                })
+        });
+    });
+
+
 
 
 });
